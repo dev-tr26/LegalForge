@@ -10,6 +10,9 @@ const api = axios.create({
 });
 
 // Add request interceptor for auth token if needed
+// Note: localStorage is commented out for artifact compatibility
+// Uncomment this section for production Django app
+/*
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -20,6 +23,7 @@ api.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+*/
 
 export const uploadDocument = async (file, userId = 'anonymous') => {
   const formData = new FormData();
@@ -33,7 +37,7 @@ export const uploadDocument = async (file, userId = 'anonymous') => {
     return response.data;
   } catch (error) {
     console.error('Upload error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -43,7 +47,7 @@ export const getDocuments = async (userId = 'anonymous') => {
     return response.data;
   } catch (error) {
     console.error('Fetch documents error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -53,7 +57,7 @@ export const getDocument = async (documentId) => {
     return response.data;
   } catch (error) {
     console.error('Fetch document error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -67,7 +71,7 @@ export const generateDocument = async (documentId, templateType, prompt = '') =>
     return response.data;
   } catch (error) {
     console.error('Generate document error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -77,7 +81,7 @@ export const deleteDocument = async (documentId) => {
     return response.data;
   } catch (error) {
     console.error('Delete document error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -87,7 +91,7 @@ export const updateDocument = async (documentId, data) => {
     return response.data;
   } catch (error) {
     console.error('Update document error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 
@@ -97,7 +101,7 @@ export const getTemplates = async () => {
     return response.data;
   } catch (error) {
     console.error('Fetch templates error:', error);
-    throw error;
+    throw error.response?.data || error;
   }
 };
 

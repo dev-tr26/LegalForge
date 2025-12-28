@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, File, X, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, File, X, AlertCircle } from 'lucide-react';
 import { uploadDocument } from '../services/api';
 
 const DocumentUploader = ({ onUploadSuccess, userId = 'anonymous' }) => {
@@ -81,7 +81,6 @@ const DocumentUploader = ({ onUploadSuccess, userId = 'anonymous' }) => {
     setError(null);
 
     try {
-      // Simulate progress
       const progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 90) {
@@ -226,21 +225,6 @@ const DocumentUploader = ({ onUploadSuccess, userId = 'anonymous' }) => {
           )}
         </div>
       )}
-
-      {/* Info Cards */}
-      <div className="grid md:grid-cols-3 gap-6">
-        {[
-          { icon: '🔍', title: 'Smart OCR', desc: 'PaddleOCR extracts text with 99% accuracy' },
-          { icon: '🤖', title: 'AI Analysis', desc: 'Grok AI identifies parties, dates & clauses' },
-          { icon: '📄', title: 'Generate Docs', desc: 'Create professional legal documents' }
-        ].map((feature, idx) => (
-          <div key={idx} className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-xl p-6 hover:border-purple-500/50 transition-all">
-            <div className="text-4xl mb-4">{feature.icon}</div>
-            <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-            <p className="text-gray-400 text-sm">{feature.desc}</p>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

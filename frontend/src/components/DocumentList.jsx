@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FileText, Eye, Download, Trash2 } from 'lucide-react';
 import StatusBadge from './StatusBadge';
 import { getDocuments, deleteDocument } from '../services/api';
@@ -8,11 +8,7 @@ const DocumentList = ({ userId = 'anonymous', onViewDocument, onDeleteSuccess })
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(null);
 
-  useEffect(() => {
-    fetchDocuments();
-  }, [userId]);
-
-  const fetchDocuments = async () => {
+  const fetchDocuments = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getDocuments(userId);
@@ -22,7 +18,11 @@ const DocumentList = ({ userId = 'anonymous', onViewDocument, onDeleteSuccess })
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    fetchDocuments();
+  }, [fetchDocuments]);
 
   const handleView = (doc) => {
     if (onViewDocument) {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Download, Save, CheckCircle, Edit3, FileText, Copy, Printer } from 'lucide-react';
 
-const DocumentEditor = ({ document, onSave, onClose }) => {
+const DocumentEditor = ({ document, onSave }) => {
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -27,7 +27,6 @@ const DocumentEditor = ({ document, onSave, onClose }) => {
   };
 
   const handleDownloadPDF = () => {
-    // Create a blob with the content
     const blob = new Blob([content], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

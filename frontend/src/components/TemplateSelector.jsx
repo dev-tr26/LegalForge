@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ChevronRight, Search, Sparkles } from 'lucide-react';
 import { getTemplates } from '../services/api';
 
@@ -76,11 +76,7 @@ const TemplateSelector = ({ onSelectTemplate, onGenerate }) => {
     }
   ];
 
-  useEffect(() => {
-    fetchTemplates();
-  }, []);
-
-  const fetchTemplates = async () => {
+  const fetchTemplates = useCallback(async () => {
     try {
       const response = await getTemplates();
       setTemplates(response.templates || defaultTemplates);
@@ -90,7 +86,11 @@ const TemplateSelector = ({ onSelectTemplate, onGenerate }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchTemplates();
+  }, [fetchTemplates]);
 
   const filteredTemplates = templates.filter(template =>
     template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
