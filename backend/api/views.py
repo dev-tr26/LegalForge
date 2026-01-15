@@ -14,6 +14,9 @@ from services.ocr_service import OCRService
 from services.llm_service import LLMService
 from services.document_service import DocumentService
 
+from django.shortcuts import get_object_or_404
+from .models import Document 
+
 logger = logging.getLogger(__name__)
 
 
@@ -311,7 +314,6 @@ class TemplateListView(APIView):
                 'name': 'Non-Disclosure Agreement',
                 'type': 'NDA',
                 'description': 'Protect confidential information',
-                'icon': '🔒',
                 'color': 'from-purple-500 to-pink-500'
             },
             {
@@ -319,7 +321,6 @@ class TemplateListView(APIView):
                 'name': 'Employment Contract',
                 'type': 'Employment',
                 'description': 'Formalize employment terms',
-                'icon': '💼',
                 'color': 'from-blue-500 to-cyan-500'
             },
             {
@@ -327,7 +328,6 @@ class TemplateListView(APIView):
                 'name': 'Lease Agreement',
                 'type': 'Lease',
                 'description': 'Rental property agreements',
-                'icon': '🏠',
                 'color': 'from-green-500 to-emerald-500'
             },
             {
@@ -335,8 +335,15 @@ class TemplateListView(APIView):
                 'name': 'Service Agreement',
                 'type': 'Service',
                 'description': 'Service provider contracts',
-                'icon': '🤝',
                 'color': 'from-orange-500 to-red-500'
             }
         ]
         return Response({'templates': templates}, status=status.HTTP_200_OK)
+    
+    
+    
+
+class DocumentAskView(APIView):
+    def post(self, request, doc_id):
+        question = request.data.get("question")
+        document = get_object_or_404(Document, id=doc_id)

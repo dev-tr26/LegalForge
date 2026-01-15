@@ -193,29 +193,29 @@ Return ONLY the JSON, no other text.
                 "clauses": [],
                 "document_type": "Unknown"
             })
-
+    
     def generate_document(self, template_type: str, structured_data: str, user_prompt: str) -> str:
         """Generate legal document from template and data"""
         prompt = PromptTemplate(
             input_variables=["template_type", "data", "instructions"],
             template="""
-Generate a professional {template_type} legal document.
+        Generate a professional {template_type} legal document.
 
-Use this extracted data:
-{data}
+        Use this extracted data:
+        {data}
 
-Additional instructions: {instructions}
+        Additional instructions: {instructions}
 
-Create a complete, legally-sound document with:
-- Proper legal formatting
-- Clear section headers
-- Party information
-- Terms and conditions
-- Signature blocks
+        Create a complete, legally-sound document with:
+        - Proper legal formatting
+        - Clear section headers
+        - Party information
+        - Terms and conditions
+        - Signature blocks
 
-Make it professional and ready to use.
-"""
-        )
+        Make it professional and ready to use.
+        """
+            )
 
         try:
             chain = LLMChain(llm=self.llm, prompt=prompt)
@@ -233,20 +233,96 @@ Make it professional and ready to use.
         except Exception as e:
             logger.error(f"Generation error: {str(e)}")
             return f"""
-{template_type.upper()}
+        {template_type.upper()}
 
-[Generated from uploaded document]
+        [Generated from uploaded document]
 
-Date: [To be specified]
+        Date: [To be specified]
 
-PARTIES:
-[Based on uploaded content]
+        PARTIES:
+        [Based on uploaded content]
 
-TERMS AND CONDITIONS:
-[Extracted from document]
+        TERMS AND CONDITIONS:
+        [Extracted from document]
 
-SIGNATURES:
-_____________________    _____________________
+        SIGNATURES:
+    _____________________    _____________________
 
-[Note: Configure Groq API for AI-customized content]
-"""
+        [Note: Configure Groq API for AI-customized content]
+    """
+    
+    def ask_question(self, ocr_text : str, question :str) -> str:
+        prompt = PromptTemplate(
+            input_variables = ["text", "question"],
+            template = 
+            
+            """
+                You are a legal Document assistant.
+                
+                Rules: 
+                - Answer ONLY from the document text 
+                - If the answer is not present , say : "Not Found in document 
+
+                - Quote the exact clause when possible 
+                
+                Document : 
+                
+                {text} 
+                
+                Question:
+                
+                {question}            
+            
+            
+            Answer : 
+            
+            """
+        )
+            
+        chain = LLMChain(llm=self.llm, prompt=prompt)
+        result = chain.invoke({
+            "text":ocr_text[:3000],                
+            "question": question
+        })
+        
+        if isinstance(result, dict):
+            return result.get("text", "")
+            
+        return str(result)
+
+        
+        
+        def analyze_risk(self, ocr_text: str) -> str:
+            prompt = PromptTemplate(
+                input_variables=['text'],
+                template ="""
+                
+                
+                You are a legL RISK ANALYSIS ASSITANT.
+                
+                Identify: 
+                
+                - Missing standard clauses
+                - Unclear or risky terms 
+                - One-sided obligations 
+                
+                Document: 
+                {text}
+                
+                Return JSON:
+                
+                {
+                    "issue": "...",
+                    "severity": "Low | Medium | High",
+                    "explanation": "...",
+                    "suggestion": "..."   
+                }
+                
+            """)
+            
+            chain = LLMChain(llm=self.llm,prompt=prompt)
+            result = chain.invoke({"text": ocr_text[:3000]})
+            
+            if isinstance(result, dict):
+                return result.get("text","")
+            return str(result)
