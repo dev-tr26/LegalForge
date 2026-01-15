@@ -3,7 +3,7 @@ AI -based legal documents generator app .
 
 #  Legal Document Generator
 
-AI-powered legal document processing system using OCR and LLM technology.
+AI-powered legal document processing system using OCR and LLMs.
 
 
 System Architecture
