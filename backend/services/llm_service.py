@@ -7,6 +7,7 @@ import logging
 import json
 from django.conf import settings
 from pydantic import Field
+import re 
 
 logger = logging.getLogger(__name__)
 
@@ -288,9 +289,10 @@ Return ONLY the JSON, no other text.
         })
         
         if isinstance(result, dict):
-            return result.get("text", "")
+            text = result.get("text", "")
+            text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
             
-        return str(result)
+        return text
 
         
         
