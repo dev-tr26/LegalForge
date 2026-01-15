@@ -5,6 +5,7 @@ const DocumentEditor = ({ document, onSave }) => {
   const [content, setContent] = useState('');
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
 
   useEffect(() => {
     if (document && document.generated_document) {
@@ -26,16 +27,72 @@ const DocumentEditor = ({ document, onSave }) => {
     setSaving(false);
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadTXT = () => {
     const blob = new Blob([content], { type: 'text/plain' });
     const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${document?.filename || 'document'}.txt`;
-    document.body.appendChild(a);
-    a.click();
+    const link = window.document.createElement('a');
+    link.href = url;
+    link.download = `${document?.filename || 'document'}.txt`;
+    window.document.body.appendChild(link);
+    link.click();
     window.URL.revokeObjectURL(url);
-    document.body.removeChild(a);
+    window.document.body.removeChild(link);
+    setShowDownloadMenu(false);
+  };
+
+  const handleDownloadPDF = () => {
+    // Create a simple HTML page with the content
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>${document?.filename || 'Document'}</title>
+        <style>
+          body {
+            font-family: 'Times New Roman', serif;
+            margin: 2cm;
+            line-height: 1.6;
+            white-space: pre-wrap;
+          }
+        </style>
+      </head>
+      <body>${content}</body>
+      </html>
+    `;
+    
+    const blob = new Blob([htmlContent], { type: 'text/html' });
+    const url = window.URL.createObjectURL(blob);
+    const link = window.document.createElement('a');
+    link.href = url;
+    link.download = `${document?.filename || 'document'}.html`;
+    window.document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    window.document.body.removeChild(link);
+    setShowDownloadMenu(false);
+    
+    alert('HTML file downloaded. Open it in your browser and use Print > Save as PDF to convert to PDF.');
+  };
+
+  const handleDownloadDOCX = () => {
+    // Create RTF format (opens in Word)
+    const rtfContent = `{\\rtf1\\ansi\\deff0
+{\\fonttbl{\\f0 Times New Roman;}}
+\\f0\\fs24
+${content.replace(/\n/g, '\\par\n')}
+}`;
+    
+    const blob = new Blob([rtfContent], { type: 'application/rtf' });
+    const url = window.URL.createObjectURL(blob);
+    const link = window.document.createElement('a');
+    link.href = url;
+    link.download = `${document?.filename || 'document'}.rtf`;
+    window.document.body.appendChild(link);
+    link.click();
+    window.URL.revokeObjectURL(url);
+    window.document.body.removeChild(link);
+    setShowDownloadMenu(false);
   };
 
   const handleCopy = () => {
@@ -46,7 +103,7 @@ const DocumentEditor = ({ document, onSave }) => {
   const handlePrint = () => {
     const printWindow = window.open('', '', 'height=600,width=800');
     printWindow.document.write('<html><head><title>Print Document</title>');
-    printWindow.document.write('<style>body { font-family: monospace; white-space: pre-wrap; }</style>');
+    printWindow.document.write('<style>body { font-family: "Times New Roman", serif; margin: 2cm; white-space: pre-wrap; line-height: 1.6; }</style>');
     printWindow.document.write('</head><body>');
     printWindow.document.write(content);
     printWindow.document.write('</body></html>');
@@ -93,13 +150,41 @@ const DocumentEditor = ({ document, onSave }) => {
             <Printer className="w-4 h-4" />
             Print
           </button>
-          <button
-            onClick={handleDownloadPDF}
-            className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all"
-          >
-            <Download className="w-4 h-4" />
-            Download
-          </button>
+          
+          {/* Download Dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+              className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white transition-all"
+            >
+              <Download className="w-4 h-4" />
+              Download
+            </button>
+            
+            {showDownloadMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-black/90 backdrop-blur-xl border border-white/10 rounded-lg shadow-lg z-50">
+                <button
+                  onClick={handleDownloadTXT}
+                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-t-lg transition-all"
+                >
+                  📄 Download as TXT
+                </button>
+                <button
+                  onClick={handleDownloadPDF}
+                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 transition-all"
+                >
+                  📕 Download as HTML/PDF
+                </button>
+                <button
+                  onClick={handleDownloadDOCX}
+                  className="w-full text-left px-4 py-2 text-white hover:bg-white/10 rounded-b-lg transition-all"
+                >
+                  📘 Download as RTF/Word
+                </button>
+              </div>
+            )}
+          </div>
+          
           <button
             onClick={handleSave}
             disabled={saving}
