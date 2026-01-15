@@ -4,6 +4,7 @@ import DocumentList from './components/DocumentList';
 import DocumentUploader from './components/DocumentUploader';
 import DocumentEditor from './components/DocumentEditor';
 import TemplateSelector from './components/TemplateSelector';
+import DocumentChat from './components/DocumentChat';
 import { getTemplates, generateDocument, updateDocument } from './services/api';
 
 const App = () => {
@@ -26,11 +27,7 @@ const App = () => {
   }, []);
 
   const refreshDocuments = async () => {
-    try {
-      setSelectedDoc(null);
-    } catch (err) {
-      console.error(err);
-    }
+    setSelectedDoc(null);
   };
 
   const handleUploadSuccess = () => {
@@ -56,12 +53,12 @@ const App = () => {
   };
 
   const handleGenerate = async (template) => {
-    if (!selectedDoc) return alert('Select a document first');
+    if (!document) return alert('Select a document first');
     setActiveTab('editor');
     try {
-      const res = await generateDocument(selectedDoc._id, template.type, '');
+      const res = await generateDocument(document._id, template.type, '');
       setGeneratedDoc(res.document || '');
-      setSelectedDoc({ ...selectedDoc, generated_document: res.document });
+      setSelectedDoc({ ...document, generated_document: res.document });
     } catch (err) {
       console.error(err);
       alert('Failed to generate document');
@@ -129,35 +126,32 @@ const App = () => {
           )}
 
           {activeTab === 'templates' && (
-            // <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            //   {templates.map(template => (
-            //     <div
-            //       key={template.id}
-            //       onClick={() => handleGenerate(template)}
-            //       className="group cursor-pointer relative"
-            //     >
-            //       <div className={`absolute inset-0 bg-gradient-to-r ${template.color} rounded-2xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity`}></div>
-            //       <div className="relative bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:border-white/30 transition-all">
-            //         <div className="text-5xl mb-4 group-hover:scale-110 transition-transform">{template.icon}</div>
-            //         <h3 className="text-white font-semibold mb-2">{template.name}</h3>
-            //         <div className="flex items-center gap-2 text-purple-400 text-sm font-medium">
-            //           Generate <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            //         </div>
-            //       </div>
-            //     </div>
-            //   ))}
-            // </div>
-            <DocumentEditor
-              document={selectedDoc ? { ...selectedDoc, generated_document: generatedDoc} : null}
-              onSave={handleSaveDocument}
-            />
-            )}
+  <TemplateSelector
+    onSelectTemplate={(template) => {
+      // Use the template content as a “document” for the editor
+      const tempDoc = {
+        _id: `template-${template.id}`,
+        filename: template.name,
+        generated_document: `# ${template.name}\n\n${template.description}\n\n${template.content || ''}`,
+        structured_data: {},
+        status: 'template'
+      };
+      setSelectedDoc(tempDoc);
+      setGeneratedDoc(tempDoc.generated_document);
+      setActiveTab('editor');
+    }}
+  />
+)}
 
-          {activeTab === 'editor' && (
-            <DocumentEditor
-              document={selectedDoc ? { ...selectedDoc, generated_document: generatedDoc } : null}
-              onSave={handleSaveDocument}
-            />
+
+          {activeTab === 'editor' && selectedDoc && (
+            <div className="grid md:grid-cols-2 gap-6">
+              <DocumentEditor
+                document={{ ...selectedDoc, generated_document: generatedDoc }}
+                onSave={handleSaveDocument}
+              />
+              <DocumentChat document={selectedDoc} />
+            </div>
           )}
         </div>
       </div>

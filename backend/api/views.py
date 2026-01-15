@@ -15,7 +15,7 @@ from services.llm_service import LLMService
 from services.document_service import DocumentService
 
 from django.shortcuts import get_object_or_404
-from .models import Document 
+ 
 
 logger = logging.getLogger(__name__)
 
@@ -342,8 +342,31 @@ class TemplateListView(APIView):
     
     
     
-
 class DocumentAskView(APIView):
     def post(self, request, doc_id):
+        """
+        Ask a question about a specific document.
+        """
         question = request.data.get("question")
-        document = get_object_or_404(Document, id=doc_id)
+        if not question:
+            return Response({"error": "Question is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        doc_service = DocumentService()
+        llm_service = LLMService()
+
+        # Fetch document from MongoDB
+        document = doc_service.get_document(doc_id)
+        if not document:
+            return Response({"error": "Document not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        ocr_text = document.get("ocr_text", "")
+        if not ocr_text:
+            return Response({"error": "Document has no OCR text"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Ask question using LLM
+        try:
+            answer = llm_service.ask_question(ocr_text, question)
+            return Response({"answer": answer}, status=status.HTTP_200_OK)
+        except Exception as e:
+            logger.error(f"Error answering question for document {doc_id}: {str(e)}")
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

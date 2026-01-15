@@ -262,7 +262,9 @@ Return ONLY the JSON, no other text.
                 Rules: 
                 - Answer ONLY from the document text 
                 - If the answer is not present , say : "Not Found in document 
-
+                - Answer clearly and professionally.
+                - Do NOT include any kind of such <think> tags.
+                - Only return the final answer.
                 - Quote the exact clause when possible 
                 
                 Document : 
@@ -292,10 +294,10 @@ Return ONLY the JSON, no other text.
 
         
         
-        def analyze_risk(self, ocr_text: str) -> str:
-            prompt = PromptTemplate(
-                input_variables=['text'],
-                template ="""
+    def analyze_risk(self, ocr_text: str) -> str:
+        prompt = PromptTemplate(
+        input_variables=['text'],
+        template ="""
                 
                 
                 You are a legL RISK ANALYSIS ASSITANT.
@@ -317,12 +319,10 @@ Return ONLY the JSON, no other text.
                     "explanation": "...",
                     "suggestion": "..."   
                 }
-                
-            """)
+        """)
+        chain = LLMChain(llm=self.llm,prompt=prompt)
+        result = chain.invoke({"text": ocr_text[:3000]})
             
-            chain = LLMChain(llm=self.llm,prompt=prompt)
-            result = chain.invoke({"text": ocr_text[:3000]})
-            
-            if isinstance(result, dict):
-                return result.get("text","")
-            return str(result)
+        if isinstance(result, dict):
+            return result.get("text","")
+        return str(result)

@@ -106,3 +106,17 @@ export const getTemplates = async () => {
 };
 
 export default api;
+
+
+export const askDocumentQuestion = async (documentId, question) => {
+  try {
+    const response = await api.post(`/documents/${documentId}/ask/`, { question });
+    return response.data;
+  } catch (error) {
+    console.error('Ask question error:', error);
+    throw error.response?.data || error;
+  }
+};
+
+
+

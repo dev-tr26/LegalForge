@@ -6,7 +6,8 @@ from .views import (
     DocumentGenerateView,
     # DocumentDeleteView,
     TemplateListView,
-    HealthCheckView
+    HealthCheckView,
+    DocumentAskView
 )
 
 urlpatterns = [
@@ -17,5 +18,6 @@ urlpatterns = [
     # path('api/documents/<str:doc_id>/delete/', DocumentDeleteView.as_view(), name='document-delete'),
     path('generate/', DocumentGenerateView.as_view(), name='document-generate'),
     path('templates/', TemplateListView.as_view(), name='template-list'),
+    path('documents/<str:doc_id>/ask/', DocumentAskView.as_view(), name='document-ask'),
 ]
 
