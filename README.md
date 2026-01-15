@@ -1,6 +1,15 @@
 # LegalForge
 AI -based legal documents generator app .
 
+
+--- 
+<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/4d58da93-0534-4f97-933b-733b5385c683" />
+
+---
+
+<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/337cd385-e5fe-4b0c-915a-5e13bd641eba" />
+
+
 #  Legal Document Generator
 
 AI-powered legal document processing system using OCR and LLMs.
@@ -83,12 +92,4 @@ Content-Type: application/json
   "prompt": "For software development project"
 }
 ```
-
-##  Frontend Features
-
-- **Drag & Drop Upload**: Easy file upload interface
-- **Real-time Status**: Live processing updates
-- **Document Editor**: Built-in rich text editor
-- **Template Library**: Pre-built legal document templates
-- **Responsive Design**: Works on desktop and mobile
 
