@@ -4,7 +4,7 @@ AI -based legal documents generator app .
 
 --- 
 
-<img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/337cd385-e5fe-4b0c-915a-5e13bd641eba" />
+<img width="500" height="500" alt="image" src="https://github.com/user-attachments/assets/337cd385-e5fe-4b0c-915a-5e13bd641eba" />
 
 
 #  Legal Document Generator
@@ -14,7 +14,7 @@ AI-powered legal document processing system using OCR and LLMs.
 
 System Architecture
 
-<img width="637" height="400" alt="image" src="https://github.com/user-attachments/assets/17e6b42c-987d-44c3-aab9-d2f3e6f9bfca" />
+<img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/17e6b42c-987d-44c3-aab9-d2f3e6f9bfca" />
 
 
 ##  Features
