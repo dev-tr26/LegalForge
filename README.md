@@ -3,9 +3,6 @@ AI -based legal documents generator app .
 
 
 --- 
-<img width="1919" height="909" alt="image" src="https://github.com/user-attachments/assets/4d58da93-0534-4f97-933b-733b5385c683" />
-
----
 
 <img width="1919" height="908" alt="image" src="https://github.com/user-attachments/assets/337cd385-e5fe-4b0c-915a-5e13bd641eba" />
 
